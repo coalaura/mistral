@@ -63,17 +63,41 @@ func (m *MistralClient) Models() (*ModelList, error) {
 func (m *MistralClient) Classify(request ClassificationRequest) (*ClassificationResponse, error) {
 	var result ClassificationResponse
 
+	if request.Model == "" {
+		request.Model = ModelMistralModeration
+	}
+
 	return &result, m.api("POST", "/moderations", request, &result)
 }
 
 func (m *MistralClient) Chat(request ChatCompletionRequest) (*ChatCompletionResponse, error) {
 	var result ChatCompletionResponse
 
+	if request.Model == "" {
+		request.Model = ModelPixtral
+	}
+
+	if request.N <= 0 {
+		request.N = 1
+	}
+
+	if request.ResponseFormat.Type == "" {
+		request.ResponseFormat = ResponseFormatText
+	}
+
 	return &result, m.api("POST", "/chat/completions", request, &result)
 }
 
 func (m *MistralClient) ChatAgent(request AgentCompletionRequest) (*ChatCompletionResponse, error) {
 	var result ChatCompletionResponse
+
+	if request.N <= 0 {
+		request.N = 1
+	}
+
+	if request.ResponseFormat.Type == "" {
+		request.ResponseFormat = ResponseFormatText
+	}
 
 	return &result, m.api("POST", "/agents/completions", request, &result)
 }
